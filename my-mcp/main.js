@@ -35,8 +35,12 @@ server.registerResource(
         "SELECT sql FROM sqlite_master WHERE type='table' AND sql IS NOT NULL ORDER BY name",
         (err, rows) => {
           db.close();
-          if (err) reject(err);
-          else resolve(rows.map((row) => row.sql + ";").join("\n"));
+
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows.map((row) => row.sql + ";").join("\n"));
+          }
         }
       );
     });
