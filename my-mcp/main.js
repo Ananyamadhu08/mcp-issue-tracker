@@ -13,9 +13,6 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// Register API-based tools
-apiBasedTools(server);
-
 // Register the database schema resource
 server.registerResource(
   "database-schema",
