@@ -253,4 +253,31 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  // Tags Tools
+
+  server.registerTool(
+    "tags-list",
+    {
+      title: "List Tags",
+      description: "Get all available tags",
+      inputSchema: {
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async ({ apiKey }) => {
+      const result = await makeRequest("GET", `${API_BASE_URL}/tags`, null, {
+        headers: { "x-api-key": apiKey },
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
