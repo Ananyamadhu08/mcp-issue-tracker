@@ -445,4 +445,27 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "health-live",
+    {
+      title: "Liveness Probe",
+      description: "Check if the API is alive",
+    },
+    async () => {
+      const result = await makeRequest(
+        "GET",
+        `${API_BASE_URL.replace("/api", "")}/health/live`
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
