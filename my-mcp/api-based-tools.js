@@ -422,4 +422,27 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "health-ready",
+    {
+      title: "Readiness Probe",
+      description: "Check if the API is ready to serve requests",
+    },
+    async () => {
+      const result = await makeRequest(
+        "GET",
+        `${API_BASE_URL.replace("/api", "")}/health/ready`
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
