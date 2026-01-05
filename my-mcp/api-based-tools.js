@@ -341,4 +341,31 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  // Users Tools
+
+  server.registerTool(
+    "users-list",
+    {
+      title: "List Users",
+      description: "Get all users",
+      inputSchema: {
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async ({ apiKey }) => {
+      const result = await makeRequest("GET", `${API_BASE_URL}/users`, null, {
+        headers: { "x-api-key": apiKey },
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
