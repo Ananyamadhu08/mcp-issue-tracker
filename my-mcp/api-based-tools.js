@@ -368,4 +368,33 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  // API Key Tools
+
+  server.registerTool(
+    "api-key-verify",
+    {
+      title: "Verify API Key",
+      description: "Verify if an API key is valid",
+      inputSchema: {
+        apiKey: z.string().describe("API key to verify"),
+      },
+    },
+    async ({ apiKey }) => {
+      const result = await makeRequest(
+        "POST",
+        `${API_BASE_URL}/auth/api-key/verify`,
+        { key: apiKey }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
