@@ -44,4 +44,48 @@ export default function apiBasedTools(server) {
       };
     }
   }
+
+  // Issues Tools
+
+  server.registerTool(
+    "issues-create",
+    {
+      title: "Create Issue",
+      description: "Create a new issue",
+      inputSchema: {
+        title: z.string().describe("Issue title"),
+        description: z.string().optional().describe("Issue description"),
+        status: z
+          .enum(["not_started", "in_progress", "done"])
+          .optional()
+          .describe("Issue status"),
+        priority: z
+          .enum(["low", "medium", "high", "urgent"])
+          .optional()
+          .describe("Issue priority"),
+        assigned_user_id: z.string().optional().describe("Assigned user ID"),
+        tag_ids: z.array(z.number()).optional().describe("Array of tag IDs"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { apiKey, ...issueData } = params;
+
+      const result = await makeRequest(
+        "POST",
+        `${API_BASE_URL}/issues`,
+        issueData,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
