@@ -48,6 +48,70 @@ export default function apiBasedTools(server) {
   // Issues Tools
 
   server.registerTool(
+    "issues-list",
+    {
+      title: "List Issues",
+      description: "Get a list of issues with optional filtering",
+      inputSchema: {
+        status: z
+          .enum(["not_started", "in_progress", "done"])
+          .optional()
+          .describe("Filter by status"),
+        assigned_user_id: z
+          .string()
+          .optional()
+          .describe("Filter by assigned user ID"),
+        tag_ids: z.string().optional().describe("Comma-separated tag IDs"),
+        search: z
+          .string()
+          .optional()
+          .describe("Search in title and description"),
+        page: z.number().optional().describe("Page number (default: 1)"),
+        limit: z
+          .number()
+          .optional()
+          .describe("Items per page (default: 10, max: 100)"),
+        priority: z
+          .enum(["low", "medium", "high"])
+          .optional()
+          .describe("Filter by priority"),
+        created_by_user_id: z
+          .string()
+          .optional()
+          .describe("Filter by creator user ID"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { apiKey, ...queryParams } = params;
+      const searchParams = new URLSearchParams();
+
+      Object.entries(queryParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          searchParams.append(key, value);
+        }
+      });
+
+      const url = `${API_BASE_URL}/issues${
+        searchParams.toString() ? `?${searchParams.toString()}` : ""
+      }`;
+
+      const result = await makeRequest("GET", url, null, {
+        headers: { "x-api-key": apiKey },
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  server.registerTool(
     "issues-create",
     {
       title: "Create Issue",
