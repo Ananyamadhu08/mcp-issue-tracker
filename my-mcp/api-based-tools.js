@@ -397,4 +397,29 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  // Health Check Tools
+
+  server.registerTool(
+    "health-status",
+    {
+      title: "Health Status",
+      description: "Get the health status of the API",
+    },
+    async () => {
+      const result = await makeRequest(
+        "GET",
+        `${API_BASE_URL.replace("/api", "")}/health`
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
