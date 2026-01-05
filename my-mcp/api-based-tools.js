@@ -181,4 +181,47 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "issues-update",
+    {
+      title: "Update Issue",
+      description: "Update an existing issue",
+      inputSchema: {
+        id: z.number().describe("Issue ID"),
+        title: z.string().optional().describe("Issue title"),
+        description: z.string().optional().describe("Issue description"),
+        status: z
+          .enum(["not_started", "in_progress", "done"])
+          .optional()
+          .describe("Issue status"),
+        priority: z
+          .enum(["low", "medium", "high"])
+          .optional()
+          .describe("Issue priority"),
+        assigned_user_id: z.string().optional().describe("Assigned user ID"),
+        tag_ids: z.array(z.number()).optional().describe("Array of tag IDs"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { id, apiKey, ...updateData } = params;
+
+      const result = await makeRequest(
+        "PUT",
+        `${API_BASE_URL}/issues/${id}`,
+        updateData,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
