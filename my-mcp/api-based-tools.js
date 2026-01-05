@@ -312,4 +312,33 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "tags-delete",
+    {
+      title: "Delete Tag",
+      description: "Delete a tag by ID",
+      inputSchema: {
+        id: z.number().describe("Tag ID"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async ({ id, apiKey }) => {
+      const result = await makeRequest(
+        "DELETE",
+        `${API_BASE_URL}/tags/${id}`,
+        null,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
