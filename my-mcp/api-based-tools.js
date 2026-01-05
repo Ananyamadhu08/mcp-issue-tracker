@@ -152,4 +152,33 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "issues-get",
+    {
+      title: "Get Issue by ID",
+      description: "Get a specific issue by its ID",
+      inputSchema: {
+        id: z.number().describe("Issue ID"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async ({ id, apiKey }) => {
+      const result = await makeRequest(
+        "GET",
+        `${API_BASE_URL}/issues/${id}`,
+        null,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
