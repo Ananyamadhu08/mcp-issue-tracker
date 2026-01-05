@@ -280,4 +280,36 @@ export default function apiBasedTools(server) {
       };
     }
   );
+
+  server.registerTool(
+    "tags-create",
+    {
+      title: "Create Tag",
+      description: "Create a new tag",
+      inputSchema: {
+        name: z.string().describe("Tag name"),
+        color: z.string().describe("Tag color (hex format)"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { apiKey, ...tagData } = params;
+
+      const result = await makeRequest(
+        "POST",
+        `${API_BASE_URL}/tags`,
+        tagData,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
