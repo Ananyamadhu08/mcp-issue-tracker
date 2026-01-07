@@ -47,4 +47,45 @@ export default function jobsBasedTools(server) {
       };
     }
   }
+
+  // Tool 1: Create new bug with high priority
+  server.registerTool(
+    "create-bug",
+    {
+      title: "Create High Priority Bug",
+      description: "Create a new bug issue with high priority and bug tag",
+      inputSchema: {
+        title: z.string().describe("Bug title"),
+        description: z.string().describe("Bug description"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { apiKey, ...bugData } = params;
+
+      // Create bug with high priority and bug tag
+      const issueData = {
+        ...bugData,
+        priority: "high",
+        status: "not_started",
+        tag_ids: [BUG_TAG_ID], // Hardcoded bug tag ID
+      };
+
+      const result = await makeRequest(
+        "POST",
+        `${API_BASE_URL}/issues`,
+        issueData,
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
