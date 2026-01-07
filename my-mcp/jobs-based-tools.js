@@ -6,6 +6,7 @@ export default function jobsBasedTools(server) {
   // Hardcoded tag IDs from database
   const BUG_TAG_ID = 3;
   const FEATURE_TAG_ID = 4; // Helper function to make HTTP requests
+
   async function makeRequest(method, url, data = null, options = {}) {
     const config = {
       method,
