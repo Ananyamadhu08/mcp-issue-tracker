@@ -130,4 +130,39 @@ export default function jobsBasedTools(server) {
       };
     }
   );
+
+  // Tool 3: Update ticket status
+  server.registerTool(
+    "update-ticket-status",
+    {
+      title: "Update Ticket Status",
+      description: "Update the status of an existing ticket/issue",
+      inputSchema: {
+        id: z.number().describe("Issue ID to update"),
+        status: z
+          .enum(["not_started", "in_progress", "done"])
+          .describe("New status for the ticket"),
+        apiKey: z.string().describe("API key for authentication"),
+      },
+    },
+    async (params) => {
+      const { id, status, apiKey } = params;
+
+      const result = await makeRequest(
+        "PUT",
+        `${API_BASE_URL}/issues/${id}`,
+        { status },
+        { headers: { "x-api-key": apiKey } }
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+  );
 }
